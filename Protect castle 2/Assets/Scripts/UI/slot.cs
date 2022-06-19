@@ -8,7 +8,8 @@ public class slot : MonoBehaviour, IDragHandler, IBeginDragHandler, IDropHandler
 {
   public Image image;
   public dragitem dragitem;
-  public string item;
+  public Item item;
+  public Inventory inven;
 
   bool isDragging = false;
 
@@ -30,7 +31,6 @@ public class slot : MonoBehaviour, IDragHandler, IBeginDragHandler, IDropHandler
       return;
     }
 
-    // Activate Container
     dragitem.gameObject.SetActive(true);
     // Set Data 
     dragitem.image.sprite = image.sprite;
@@ -76,7 +76,7 @@ public class slot : MonoBehaviour, IDragHandler, IBeginDragHandler, IDropHandler
     {
       // keep data instance for swap 
       Sprite tempSprite = image.sprite;
-      string tempItem = item;
+      Item tempItem = item;
 
       // set data from drag object on Container
       image.sprite = dragitem.image.sprite;

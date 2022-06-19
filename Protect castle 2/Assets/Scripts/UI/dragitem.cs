@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class dragitem : MonoBehaviour
 {
   public Image image;
-  public string item;
+  public Item item;
 
   private void Start()
   {

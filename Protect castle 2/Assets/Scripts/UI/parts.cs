@@ -8,8 +8,8 @@ public class parts : MonoBehaviour, IDragHandler, IBeginDragHandler, IDropHandle
 {
   public Image image;
   public dragitem dragitem;
-  public string item;
-  string type;
+  public Item item;
+  public string type;
 
   bool isDragging = false;
 
@@ -30,13 +30,13 @@ public class parts : MonoBehaviour, IDragHandler, IBeginDragHandler, IDropHandle
     {
       return;
     }
-
-    // Activate Container
+    //이동이미지 작동
     dragitem.gameObject.SetActive(true);
-    // Set Data 
+    //이미지, 아이템데이터 세팅
     dragitem.image.sprite = image.sprite;
     dragitem.item = item;
     isDragging = true;
+    item.unequipitem();
   }
   // 드래그 중
   public void OnDrag(PointerEventData eventData)
@@ -73,24 +73,30 @@ public class parts : MonoBehaviour, IDragHandler, IBeginDragHandler, IDropHandle
   // 드래그중 교환
   public void OnDrop(PointerEventData eventData)
   {
-    if (dragitem.image.sprite != null)
+    if(dragitem.item.type == type)
     {
-      // keep data instance for swap 
-      Sprite tempSprite = image.sprite;
-      string tempItem = item;
+      if (dragitem.image.sprite != null)
+      {
+        // keep data instance for swap 
+        Sprite tempSprite = image.sprite;
+        Item tempItem = item;
 
-      // set data from drag object on Container
-      image.sprite = dragitem.image.sprite;
-      item = dragitem.item;
+        // set data from drag object on Container
+        image.sprite = dragitem.image.sprite;
+        item = dragitem.item;
 
-      // put data from drop object to Container.  
-      dragitem.image.sprite = tempSprite;
-      dragitem.item = tempItem;
-    }
-    else
-    {
-      dragitem.image.sprite = null;
-      dragitem.item = null;
+        // put data from drop object to Container.  
+        dragitem.image.sprite = tempSprite;
+        dragitem.item = tempItem;
+
+        item.gameObject.SetActive(true);
+        item.equipitem();
+      }
+      else
+      {
+        dragitem.image.sprite = null;
+        dragitem.item = null;
+      }
     }
   }
 }

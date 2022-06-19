@@ -5,12 +5,12 @@ using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
-  string[] items;
+  Item[] items;
   int inven;
   public GameObject invenUI;
   slot[] slots;
   public GameObject pickitem;
-  public GameObject mainUI;
+  public GameObject TabUI;
   GameObject item;
 
   private void Awake()
@@ -20,7 +20,7 @@ public class Inventory : MonoBehaviour
 
   private void Start()
   {
-    items = new string[slots.Length];
+    items = new Item[slots.Length];
   }
 
   private void Update()
@@ -32,13 +32,13 @@ public class Inventory : MonoBehaviour
       {
         if (items[i] == null)
         {
-          items[i] = item.name;
+          items[i] = item.GetComponent<Item>();
           slots[i].image.sprite = item.GetComponentInChildren<Image>().sprite;
           slots[i].item = items[i];
           break;
         }
       }
-      Destroy(item);
+      item.gameObject.SetActive(false);
       pickitem.SetActive(false);
     }
   }
@@ -47,7 +47,7 @@ public class Inventory : MonoBehaviour
     if (other.gameObject.tag == "item"&&other.GetComponent<Item>().equipped==false&&inven<slots.Length)
     {
       item = other.gameObject;
-      if (mainUI.activeSelf==true)
+      if (TabUI.activeSelf==false)
       {
         pickitem.SetActive(true);
       }
@@ -58,7 +58,7 @@ public class Inventory : MonoBehaviour
   {
     if (other.gameObject.tag == "item" && other.GetComponent<Item>().equipped == false && inven < slots.Length)
     {
-      if (mainUI.activeSelf == true)
+      if (TabUI.activeSelf == false)
       {
        pickitem.SetActive(false);
       }

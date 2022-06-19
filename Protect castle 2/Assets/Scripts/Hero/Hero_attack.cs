@@ -8,7 +8,7 @@ public class Hero_attack : MonoBehaviour
   float atimer, attack_speed;
   public Animator anim;
   public GameObject shield;
-  public GameObject inven;
+  public GameObject Tabinven;
 
 
   private void Start()
@@ -20,7 +20,7 @@ public class Hero_attack : MonoBehaviour
   private void Update()
   {
     if (Input.GetMouseButtonDown(0))
-      if(inven.activeSelf==true)
+      if(Tabinven.activeSelf==false)
         attack_cal();
 
     if (attack==1)
