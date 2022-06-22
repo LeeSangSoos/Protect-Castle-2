@@ -7,7 +7,7 @@ public class enemy1 : MonoBehaviour
 {
   public Animator anim;
   float attack_speed, time, distance;
-  public float health, defense, shield, mana;
+  public float health, defence, shield, mana, resistence;
   public Transform target;
   NavMeshAgent nav;
 
@@ -49,6 +49,15 @@ public class enemy1 : MonoBehaviour
   public void Set_target(Collider t)
   {
     target = t.transform;
+  }
+
+  public void c_hp(float change)
+  {
+    health -= change + defence;
+  }
+  public void c_magicdamage(float change)
+  {
+    health -= change + resistence;
   }
 
   //Á×À½

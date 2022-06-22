@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Hero_movement : MonoBehaviour
 {
@@ -9,14 +11,20 @@ public class Hero_movement : MonoBehaviour
   public Rigidbody rbody;
   float speed, jump_power, turn_speed;
   public bool jump;
-  bool constmove, walk;
-  Vector3 rotation, move_Vector;
+  bool constmove;
+  public Vector3 rotation, move_Vector;
+  TextMeshProUGUI movespeed;
+
+  private void Awake()
+  {
+    movespeed = GameObject.Find("movespeed").GetComponent<TextMeshProUGUI>();
+  }
 
 
   void Start()
   {
     turn_speed = 100f;
-    speed = 25f;
+    c_speed(25f);
     jump_power = 5f;
     rotation = transform.eulerAngles;
   }
@@ -88,5 +96,9 @@ public class Hero_movement : MonoBehaviour
     return false;
   }
 
-
+  public void c_speed(float change)
+  {
+    speed += change;
+    movespeed.text = "MSP: " + speed;
+  }
 }

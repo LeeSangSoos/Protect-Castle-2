@@ -16,8 +16,7 @@ public class weapon_melee : MonoBehaviour
   {
     if (other.gameObject.tag == "enemy")
     {
-      other.GetComponent<enemy1>().health -= hero.GetComponent<Hero_status>().attack+ damage;
+      other.GetComponent<enemy1>().c_hp(-hero.GetComponentInChildren<Warrior>().getstat("attack")-damage);
     }
-
   }
 }
