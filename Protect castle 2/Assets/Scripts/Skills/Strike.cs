@@ -4,16 +4,17 @@ using UnityEngine;
 
 public class Strike : MonoBehaviour
 {
-  public string explane;
+  public string explain = "Deal damage in front (Str*2+attack)";
   float damage;
 
   public void set(float str, float attack, float skillbonus)
   {
     damage = (str * 2 + attack) * skillbonus;
   }
-  private void Start()
+
+  private void OnEnable()
   {
-    explane = "전방을 강타하여 (Str*2+attack)만큼의 데미지를 줍니다";
+    StartCoroutine(destroy());
   }
 
   private void OnTriggerEnter(Collider collision)
@@ -22,7 +23,6 @@ public class Strike : MonoBehaviour
     {
       collision.GetComponent<enemy1>().c_hp(-damage);
     }
-    StartCoroutine(destroy());
   }
 
   IEnumerator destroy()

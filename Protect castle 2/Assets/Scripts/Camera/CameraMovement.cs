@@ -9,6 +9,7 @@ public class CameraMovement : MonoBehaviour
   public float sensitivity = 1500f;
   public float xchange = 70f;
   public float follow_speed = 10f;
+  public Tab tabmenu;
 
   float rotZ;
   float rotY;
@@ -31,9 +32,11 @@ public class CameraMovement : MonoBehaviour
 
   void Update()
   {
-    rotZ += Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
-    rotY += Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
-
+    if (tabmenu.gameObject.activeSelf == false)
+    {
+      rotZ += Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime;
+      rotY += Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime;
+    }
     rotZ = Mathf.Clamp(rotZ, -xchange, xchange);//z축 회전 제한(위아래)
     Quaternion rot = Quaternion.Euler(0, rotY, rotZ);//회전수치
     transform.rotation = rot;//회전

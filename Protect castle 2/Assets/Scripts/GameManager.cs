@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
   public GameObject Tabinven;
+  public GameObject MainUI;
   private void Awake()
   {
     Application.targetFrameRate = 60;
@@ -14,7 +16,6 @@ public class GameManager : MonoBehaviour
   {
     Tabinven.SetActive(false);
     Cursor.lockState = CursorLockMode.Confined;
-    Cursor.visible = false;
   }
 
   private void Update()
@@ -22,12 +23,12 @@ public class GameManager : MonoBehaviour
     if (Input.GetKeyDown(KeyCode.Tab)&&Tabinven.activeSelf==false)
     {
       Tabinven.SetActive(true);
-      Cursor.visible = true;
+      //Cursor.visible = true;
     }
     else if(Input.GetKeyDown(KeyCode.Tab) && Tabinven.activeSelf == true)
     {
       Tabinven.SetActive(false);
-      Cursor.visible = false;
+      //Cursor.visible = false;
     }
   }
 }
