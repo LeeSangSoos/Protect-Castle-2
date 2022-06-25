@@ -5,11 +5,11 @@ using UnityEngine;
 public class Raise_Shield : MonoBehaviour
 {
   public string explain = "Encrease defence by (10+Str*5), magic resistence by (10+Str*4+Int*1) for 10 seconds.";
-  Warrior parent;
+  Player player;
 
   private void Awake()
   {
-    parent = GetComponentInParent<Warrior>();
+    player = GameObject.Find("Player").GetComponent<Player>();
   }
 
   private void OnEnable()
@@ -20,8 +20,8 @@ public class Raise_Shield : MonoBehaviour
 
   public void set(float str, float Int, float skillbonus)
   {
-    parent.c_defence((10 + str * 5) * skillbonus);
-    parent.c_resistence((10 + str * 4 + Int * 1) * skillbonus);
+    player.c_defence((10 + str * 5) * skillbonus);
+    player.c_resistence((10 + str * 4 + Int * 1) * skillbonus);
   }
 
   IEnumerator destroy()

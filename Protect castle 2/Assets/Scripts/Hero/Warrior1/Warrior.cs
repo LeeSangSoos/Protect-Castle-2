@@ -1,78 +1,55 @@
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Warrior : MonoBehaviour
 {
-  Slider HP, MP;
-  Dictionary<string, float> stats =
-    new Dictionary<string, float>() { { "maxhp", 0 }, {"maxmp",0},{ "maxexp",0},{ "hp", 0 },{ "mp", 0 },{ "hpplus", 0 },{ "mpplus", 0 },
-    {"Str",0 },{"Dex",0 },{"Int",0 },{"exp",0 },{"attackspeed",0 },{"attack",0 },{"defence",0 },{"evade",0 },{"crit",0 },{"skillbonus",0 },{"level",0 },
-      {"resistence",0 } };
-  string ep1= "increase attack by (skill level * 5) "+"(level:" + 0 + "/3)";
-  string ep2;
-  bool isattack;
-  float atimer;
-  Animator anim;
-  GameObject Tabinven;
-  TextMeshProUGUI TStr, TDex, TInt, Tlevel, Tattack_speed, Tattack, Tdefence, Tevade, Tcrit, Tskill_bonus, Tmagicresistence, Tskillpoint;
   Strike strike;
   Raise_Shield raise_Shield;
-  int skillpoint;
   public skillpanel skillpanel;
-  Hero_movement hero_Movement;
   Image sprite1, sprite2, sprite3, sprite4;
   public Sprite sksp1, sksp2, sksp3, sksp4;
-  int pa1_1L, pa1_2L;
+  Player parent;
+  Animator anim;
+  string ep1_1 = "increase attack by (skill level * 5) " + "(level:" + 0 + "/3)";
+  string ep1_2 = "increase defence by (skill level * 5) " + "(level:" + 0 + "/3)";
+
   private void Awake()
   {
     anim = GetComponent<Animator>();
-    HP = GameObject.Find("Hero_Life").GetComponent<Slider>();
-    MP = GameObject.Find("Hero_Mana").GetComponent<Slider>();
-    Tabinven = GameObject.Find("Tab");
-    TStr = GameObject.Find("Str").GetComponent<TextMeshProUGUI>();
-    TDex = GameObject.Find("Dex").GetComponent<TextMeshProUGUI>();
-    TInt = GameObject.Find("Int").GetComponent<TextMeshProUGUI>();
-    Tlevel = GameObject.Find("Level").GetComponent<TextMeshProUGUI>();
-    Tattack_speed = GameObject.Find("attack speed").GetComponent<TextMeshProUGUI>();
-    Tattack = GameObject.Find("attack").GetComponent<TextMeshProUGUI>();
-    Tdefence = GameObject.Find("defence").GetComponent<TextMeshProUGUI>();
-    Tevade = GameObject.Find("evade").GetComponent<TextMeshProUGUI>();
-    Tcrit = GameObject.Find("crit").GetComponent<TextMeshProUGUI>();
-    Tskill_bonus = GameObject.Find("skill bonus").GetComponent<TextMeshProUGUI>();
-    Tmagicresistence = GameObject.Find("magicresistence").GetComponent<TextMeshProUGUI>();
-    Tskillpoint = GameObject.Find("skill point").GetComponent<TextMeshProUGUI>();
-    hero_Movement = GameObject.Find("Player").GetComponent<Hero_movement>();
     sprite1 = GameObject.Find("skill1").GetComponent<Image>();
     sprite2 = GameObject.Find("skill2").GetComponent<Image>();
     sprite3 = GameObject.Find("skill3").GetComponent<Image>();
     sprite4 = GameObject.Find("skill4").GetComponent<Image>();
     strike = GetComponentInChildren<Strike>();
     raise_Shield = GetComponentInChildren<Raise_Shield>();
+    parent = GetComponentInParent<Player>();
+
+    #region stats setting
+    parent.c_maxhp(500);
+    parent.c_maxmp(100);
+    parent.c_attack(5);
+    parent.c_attack_speed(4);
+    parent.c_crit(0);
+    parent.c_defence(1);
+    parent.c_Dex(5);
+    parent.c_evade(0);
+    parent.c_heal(parent.stats["maxhp"]);
+    parent.c_mp(parent.stats["maxmp"]);
+    parent.c_hpplus(0.5f);
+    parent.c_mpplus(0.3f);
+    parent.c_skill_bonus(0);
+    parent.c_Str(10);
+    parent.c_Int(5);
+    parent.c_resistence(0);
+    #endregion
   }
   private void Start()
   {
-    c_exp(0);
-    c_maxhp(500);
-    c_maxmp(100);
-    c_attack(5);
-    c_attack_speed(4);
-    c_crit(0);
-    c_defence(1);
-    c_Dex(5);
-    c_evade(0);
-    c_heal(stats["maxhp"]);
-    c_mp(stats["maxmp"]);
-    c_hpplus(0.5f);
-    c_mpplus(0.3f);
-    c_skill_bonus(0);
-    c_Str(10);
-    c_Int(5);
-    c_resistence(0);
-    atimer = stats["attackspeed"] + 1;
     strike.gameObject.SetActive(false);
     raise_Shield.gameObject.SetActive(false);
+
+    #region  active sprite, name, skill text
     sprite1.sprite = sksp1;
     sprite2.sprite = sksp2;
     sprite3.sprite = sksp3;
@@ -81,252 +58,51 @@ public class Warrior : MonoBehaviour
     GameObject.Find("skill2 text").GetComponent<TextMeshProUGUI>().text = "Raise Shield(2)";
     GameObject.Find("skill3 text").GetComponent<TextMeshProUGUI>().text = "Defend/Slash(3)";
     GameObject.Find("skill4 text").GetComponent<TextMeshProUGUI>().text = "Thunder Light(4)";
+    parent.sk1ex = strike.explain;
+    parent.sk2ex = raise_Shield.explain;
+    #endregion
+
+    #region passive sprite, onclick, explain
     skillpanel.passive[0, 0].image.sprite = Resources.Load<Sprite>("sprite/skill/attackup");
     skillpanel.passive[0, 1].image.sprite = Resources.Load<Sprite>("sprite/skill/defenceup");
     skillpanel.passive[0, 0].onClick.AddListener(P_attackup);
     skillpanel.passive[0, 1].onClick.AddListener(P_defenceup);
+    parent.ep1_1 = ep1_1;
+    #endregion
   }
 
   private void Update()
   {
-    attack_cal();
-
-    if (Input.GetKeyDown(KeyCode.Alpha1) && stats["mp"] >= 50)
+    if (Input.GetKeyDown(KeyCode.Alpha1) && parent.stats["mp"] >= 50)
     {
       skill1();
     }
-    else if (Input.GetKeyDown(KeyCode.Alpha2) && stats["mp"] >= 80)
+    else if (Input.GetKeyDown(KeyCode.Alpha2) && parent.stats["mp"] >= 80)
     {
       skill2();
     }
-    else if (Input.GetKeyDown(KeyCode.Alpha3) && stats["mp"] >= 100)
+    else if (Input.GetKeyDown(KeyCode.Alpha3) && parent.stats["mp"] >= 100)
     {
       skill3();
     }
-    else if (Input.GetKeyDown(KeyCode.Alpha4) && stats["mp"] >= 500)
+    else if (Input.GetKeyDown(KeyCode.Alpha4) && parent.stats["mp"] >= 500)
     {
       skill4();
     }
   }
 
-  #region stats change
-  public void c_mealdamaged(float change)
-  {
-    stats["hp"] -= change - stats["defence"];
-    HP.value = stats["hp"];
-    HP.GetComponentInChildren<TextMeshProUGUI>().text = "HP: " + stats["hp"] + "/" + stats["maxhp"];
-  }
-  public void c_magicdamaged(float change)
-  {
-    stats["hp"] -= change;
-    HP.value = stats["hp"];
-    HP.GetComponentInChildren<TextMeshProUGUI>().text = "HP: " + stats["hp"] + "/" + stats["maxhp"];
-  }
-  public void c_heal(float change)
-  {
-    stats["hp"] += change;
-    HP.value = stats["hp"];
-    HP.GetComponentInChildren<TextMeshProUGUI>().text = "HP: " + stats["hp"] + "/" + stats["maxhp"];
-  }
-  public void c_maxhp(float change)
-  {
-    stats["maxhp"] += change;
-    HP.maxValue = stats["maxhp"];
-    HP.GetComponentInChildren<TextMeshProUGUI>().text = "HP: " + stats["hp"] + "/" + stats["maxhp"];
-  }
-  public void c_mp(float change)
-  {
-    stats["mp"] += change;
-    MP.value = stats["mp"];
-    MP.GetComponentInChildren<TextMeshProUGUI>().text = "MP: " + stats["mp"] + "/" + stats["maxmp"];
-  }
-  public void c_maxmp(float change)
-  {
-    stats["maxmp"] += change;
-    MP.maxValue = stats["maxmp"];
-    MP.GetComponentInChildren<TextMeshProUGUI>().text = "MP: " + stats["mp"] + "/" + stats["maxmp"];
-  }
-  void c_hpplus(float change)
-  {
-    stats["hpplus"] += change;
-  }
-  void c_mpplus(float change)
-  {
-    stats["mpplus"] += change;
-  }
-  public void c_Str(float change)
-  {
-    stats["Str"] += change;
-    c_maxhp(stats["Str"] * 10);
-    c_heal(stats["Str"] * 10);
-    c_attack(stats["Str"] * 1);
-    c_defence(stats["Str"] * 0.5f);
-    c_hpplus(stats["Str"] * 0.5f);
-    TStr.text = "Str: " + stats["Str"];
-  }
-  public void c_Dex(float change)
-  {
-    stats["Dex"] += change;
-    c_attack_speed(stats["Dex"] * 0.05f);
-    c_crit(stats["Dex"] * 0.5f);
-    c_evade(stats["Dex"] * 0.1f);
-    TDex.text = "Dex: " + stats["Dex"];
-  }
-  public void c_Int(float change)
-  {
-    stats["Int"] += change;
-    c_maxmp(stats["Int"] * 5f);
-    c_mp(stats["Int"] * 5f);
-    c_skill_bonus(stats["Int"] * 0.05f);
-    c_mpplus(stats["Int"] * 0.3f);
-    TInt.text = "Int: " + stats["Int"];
-  }
-  public void c_attack(float change)
-  {
-    stats["attack"] += change;
-    Tattack.text = "ATK: " + stats["attack"];
-  }
-  public void c_attack_speed(float change)
-  {
-    stats["attackspeed"] += change;
-    Tattack_speed.text = "AS: " + stats["attackspeed"];
-  }
-  public void c_defence(float change)
-  {
-    stats["defence"] += change;
-    Tdefence.text = "DF: " + stats["defence"];
-  }
-  public void c_evade(float change)
-  {
-    stats["evade"] += change;
-    Tevade.text = "Eva: " + stats["evade"];
-  }
-  public void c_crit(float change)
-  {
-    stats["crit"] += change;
-    Tcrit.text = "Cri: " + stats["crit"];
-  }
-  public void c_skill_bonus(float change)
-  {
-    stats["skillbonus"] += change;
-    Tskill_bonus.text = "SB: " + stats["skillbonus"];
-  }
-  public void c_resistence(float change)
-  {
-    stats["resistence"] += change;
-    Tmagicresistence.text = "MR: " + stats["resistence"];
-  }
-  public void c_exp(float change)
-  {
-    stats["exp"] += change;
-    if (stats["maxexp"] <= stats["exp"])
-    {
-      stats["level"] += 1;
-      skillpoint += 1;
-      stats["maxexp"] = stats["level"] * stats["level"] * 100;
-      if (stats["exp"] >= stats["maxexp"])
-        stats["exp"] -= stats["maxexp"];
-    }
-    Tlevel.text = "Lv: " + stats["level"] + "\nExp: " + (stats["exp"] / stats["maxexp"]) * 100 + "%";
-    Tskillpoint.text = "skill point: " + skillpoint;
-    if (stats["level"] >=1)
-    {
-      for (int j = 0; j < 3; j++)
-      {
-        skillpanel.passive[0, j].interactable = true;
-        skillpanel.active[0, j].interactable = true;
-      }
-    }
-    else if (stats["level"] >=4)
-    {
-      for (int j = 0; j < 3; j++)
-      {
-        skillpanel.passive[1, j].interactable = true;
-        skillpanel.active[1, j].interactable = true;
-      }
-    }
-    else if (stats["level"] >= 10)
-    {
-      for (int j = 0; j < 3; j++)
-      {
-        skillpanel.passive[2, j].interactable = true;
-        skillpanel.active[2, j].interactable = true;
-      }
-    }
-    else if (stats["level"] >= 20)
-    {
-      for (int j = 0; j < 3; j++)
-      {
-        skillpanel.passive[3, j].interactable = true;
-        skillpanel.active[3, j].interactable = true;
-      }
-    }
-    else if (stats["level"] >= 35)
-    {
-      for (int j = 0; j < 3; j++)
-      {
-        skillpanel.passive[4, j].interactable = true;
-        skillpanel.active[4, j].interactable = true;
-      }
-    }
-    else if (stats["level"] >= 50)
-    {
-      for (int j = 0; j < 3; j++)
-      {
-        skillpanel.passive[5, j].interactable = true;
-        skillpanel.active[5, j].interactable = true;
-      }
-    }
-  }
-  public bool useskillpoint()
-  {
-    if (skillpoint > 0)
-    {
-      skillpoint -= 1;
-      Tskillpoint.text = "skill point: " + skillpoint;
-      return true;
-    }
-    else
-      return false;
-  }
-  public float getstat(string name)
-  {
-    return stats[name];
-  }
-  #endregion
-
-  void attack_cal()
-  {
-    if (atimer > stats["attackspeed"])
-    {
-      if (Input.GetMouseButtonDown(0) && Tabinven.activeSelf == false)
-      {
-        isattack = true;
-        atimer = 0;
-        anim.SetTrigger("attack");
-      }
-      else
-      {
-        isattack = false;
-      }
-    }
-    if (isattack == true)
-    {
-      atimer += 1 * Time.deltaTime;
-    }
-  }
-
+  #region active skill
   void skill1()
   {
     anim.SetTrigger("skill1");
     strike.gameObject.SetActive(true);
-    strike.set(stats["Str"], stats["attack"], stats["skillbonus"]);
+    strike.set(parent.stats["Str"], parent.stats["attack"], parent.stats["skillbonus"]);
   }
   void skill2()
   {
     anim.SetTrigger("skill2");
     raise_Shield.gameObject.SetActive(true);
-    raise_Shield.set(stats["Str"], stats["attack"], stats["skillbonus"]);
+    raise_Shield.set(parent.stats["Str"], parent.stats["attack"], parent.stats["skillbonus"]);
   }
   void skill3()
   {
@@ -336,19 +112,28 @@ public class Warrior : MonoBehaviour
   {
 
   }
+  #endregion
 
+  #region passive skill
   void P_attackup()
   {
-    if (useskillpoint()&&pa1_1L<3)
+    if (parent.useskillpoint() && parent.pa1_1L < 3)
     {
-      c_attack(5);
-      pa1_1L += 1;
-      ep1 = "increase attack by (skill level * 5) " + "(level:" + pa1_1L + "/3)";
+      parent.c_attack(5);
+      parent.pa1_1L += 1;
+      ep1_1 = "increase attack by (skill level * 5) " + "(level:" + parent.pa1_1L + "/3)";
+      parent.ep1_1 = ep1_1;
     }
   }
   void P_defenceup()
   {
-    if (useskillpoint())
-      c_defence(5);
+    if (parent.useskillpoint() && parent.pa1_2L < 3)
+    {
+      parent.c_defence(5);
+      parent.pa1_2L += 1;
+      ep1_2 = "increase defence by (skill level * 5) " + "(level:" + parent.pa1_2L + "/3)";
+      parent.ep1_2 = ep1_2;
+    }
   }
+  #endregion
 }

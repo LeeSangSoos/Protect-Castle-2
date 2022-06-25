@@ -9,14 +9,14 @@ public class weapon_melee : MonoBehaviour
 
   private void Start()
   {
-    hero = GameObject.Find("Warrior1_p");
+    hero = GameObject.Find("Player");
   }
 
   private void OnTriggerEnter(Collider other)
   {
     if (other.gameObject.tag == "enemy")
     {
-      other.GetComponent<enemy1>().c_hp(-hero.GetComponentInChildren<Warrior>().getstat("attack")-damage);
+      other.GetComponent<enemy1>().c_hp(-hero.GetComponentInChildren<Player>().getstat("attack")-damage);
     }
   }
 }
